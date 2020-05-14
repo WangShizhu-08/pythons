@@ -23,12 +23,10 @@ def parse(html):
 seen = set()
 unseen = set([base_url,])
 count, t1 = 1, time.time()
-
 pool = mp.Pool()
 
 
 while len(unseen) != 0:
-    
     print('Getting pages from unseen urls...')
     #htmls = [get_page(url) for url in unseen] normal_deed
     # htmls = pool.map(get_page, unseen) also works, but slower. Guessing:"It blocks until the result is ready."
@@ -38,6 +36,7 @@ while len(unseen) != 0:
     print('Parsing...')
     #results = [parse(html) for html in htmls] normal_deed
     parse_jobs = [pool.apply_async(parse, args=(html,)) for html in htmls]
+    #type(pool.apply_async()) is generator, type(parse_jobs) is list
     results = [i.get() for i in parse_jobs]
 
     print('Updating Seen Urls')  
